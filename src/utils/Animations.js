@@ -32,7 +32,7 @@ export function animarIteraciones(
       if (index > 0) {
         const { x: prevX, y: prevY } = getCoords(iteraciones[index - 1]);
         calculator.setExpression({
-          id: `punto-${index - 1}`,
+          id: `point-${index - 1}`,
           latex: `(${prevX}, ${prevY})`,
           color: "#1750a0",
           showLabel: false,
@@ -41,7 +41,7 @@ export function animarIteraciones(
       }
 
       calculator.setExpression({
-        id: `punto-${index}`,
+        id: `point-${index}`,
         latex: `(${x}, ${y})`,
         color: "#ef4444",
         label: `p${iter.n} = ${typeof x === "number" ? x.toFixed(5) : x}`,
@@ -50,7 +50,7 @@ export function animarIteraciones(
 
       if (!isLast) {
         calculator.setExpression({
-          id: `linea-${index}`,
+          id: `point-${index}`,
           latex: `(${x}, ${y})`,
           color: "#1750a0",
           showLabel: false,
