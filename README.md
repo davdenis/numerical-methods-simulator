@@ -1,54 +1,55 @@
-# SIMAT - Your friendly numerical simulator
+# Numerical Methods Simulator
 
-Hello! **SIMAT** is an interactive web app designed to visually simulate the execution of different root-finding numerical algorithms, in order to analize their geometrical behaviour. This project implements the **Desmos Graphing Calculator API** for the matters of calculus and graphing. At the same time, the development of the visual design is assisted by **Google Antigravity**
+This project consists in a web tool designed to visualize the execution of classical root-finding algorithms step by step, implementing the Desmos Graphing Calculator API. The app combines numerical computation with interactive graphical visualization, allowing each iteration of the algorithms to be observed directly on the Cartesian plane. It was developed as a study companion for numerical analysis, with a particular focus on understanding the geometric behavior and convergence of the implemented methods.
 
-## Preview
-
-## Key Features
-
-- ### **Real-time visualization.**
-
-  Each iteration is visually animated plotting its values, aproximations, and the respective input function on the Cartesian plane.
-
-- ### **Dynamic LaTeX math evaluation.**
-
-  The user can input any function they desire thanks to the math parser that translates LaTeX functions for JS.
-
-- ### **Method selection.**
-
-  The input fields are dynamically updated acording to the selected numerical methods and their parameters
-
-- ### **Convergence and results summary.**
-
-  Instand feedback on the calculated result, aproximate values, total iterations and estimated errors.
-
-- ### **Tested algorithms.**
-
-  Numerical methods and the LaTeX parser are verified through automated unit tests implementing **Vitest**.
+## Features
+- Step-by-step visualization - During execution, each iteration is visually representated on the Cartesian plane for a better understanding.
+- Interactive function input - Users can enter and modify mathematical expressions, which are then evaluated and rendered by the integrated graphing calculator.
+- Configurable parameters - Each method provides parameters input fields for its initial conditions such as intervals, tolerance and limits, which change accordingly to the selected algoritmh.
+- Automated testing - The implemented methods, as the expression parser are covered by unit tests using Vitest.
 
 ## Implemented Methods
+### Bisection
 
-### 1. Bisection Method
+  #### Parameters
+  - **`a`** - Lower endpoint of initial interval.
+  - **`b`** - Upper endpoint of initial interval.
+  - **`tol`** - Convergence tolerance.
+  - **`max`** - Maximum number of iterations allowed.
 
-Encloses the root within a closed interval $[a, b]$ where $f(a) \cdot f(b) < 0$, repeatedly bisecting the interval:
-$$p_n = a + \frac{a_n + b_n}{2}$$
+  This method repeatedly bisects an initial interval $[a, b]$ on which $f(x)$ is continuous and $f(a) \cdot f(b) < 0$, selecting at each step the subinterval where the sign change occurs.
 
-![Demo description](./gif/bisection.gif)
+  At each iteration, the midpoint $p_n = \frac{a_n + b_n}{2}$ is calculated, and the subinterval containing the sign change is retained as the input for the next setp. The estimated error is calculated as $E_n = \frac{b_n - a_n}{2}$.
 
-### 2. Fixed Point Iteration
+  Then, execution stops as soon as $f(p_n) = 0$ or $E_n \leq \text{tol}$, where $\text{tol}$ is the selected tolerance.
 
-Transforms $f(x) = 0$ into the equivalent form $x = g(x)$ and iterates from an initial seed $p_0$:
-$$p_n = g(p_{n-1})$$
-_(Plotted alongside the identity line $y = x$)_.
 
-## Tech Stack
+## Requirements
+- **`Node.js`**  — Node.js 18 or newer.
+- **`npm`** 
 
-- **Frontend:** [React 19](https://react.dev/)
-- **Build Tool:** [Vite](https://vitejs.dev/)
-- **Graphing Engine:** [Desmos API v1.12](https://www.desmos.com/api/v1.12/docs/index.html)
-- **Unit Testing:** [Vitest](https://vitest.dev/)
-- **Styling:** Vanilla CSS3 with custom variables and a _Dark_ theme.
+A network connection is required for the Desmos API script used by the application.
 
-### Prerequisites
+## Getting Started
 
-- [Node.js](https://nodejs.org/) (v18 or higher) installed.
+Clone the repository:
+
+```bash
+git clone https://github.com/davdenis/numerical-methods-simulator.git  
+cd numerical-methods-simulator
+```
+
+Install the project dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open the local URL displayed by Vite, normally.
+
