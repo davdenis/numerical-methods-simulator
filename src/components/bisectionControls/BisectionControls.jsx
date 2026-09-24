@@ -1,34 +1,34 @@
-export function BisectionControls({ a, setA, b, setB, tol, setTol, n, setN }) {
+export function BisectionControls({ params, setParam }) {
   return (
     <div className="method-parameters">
-      <h3 className="parameters-title">Parámetros del Intervalo</h3>
+      <h3 className="parameters-title">Interval</h3>
 
       <div className="input-row">
         <div className="input-group">
           <label htmlFor="input-a" className="input-label">
-            Límite inferior (a)
+            Lower Bound (a)
           </label>
           <input
             id="input-a"
             type="number"
             step="any"
             className="styled-input"
-            value={a}
-            onChange={(e) => setA(parseFloat(e.target.value) || 0)}
+            value={params.a}
+            onChange={(e) => setParam("a", parseFloat(e.target.value) || 0)}
           />
         </div>
 
         <div className="input-group">
           <label htmlFor="input-b" className="input-label">
-            Límite superior (b)
+            Upper Bound (b)
           </label>
           <input
             id="input-b"
             type="number"
             step="any"
             className="styled-input"
-            value={b}
-            onChange={(e) => setB(parseFloat(e.target.value) || 0)}
+            value={params.b}
+            onChange={(e) => setParam("b", parseFloat(e.target.value) || 0)}
           />
         </div>
       </div>
@@ -36,21 +36,23 @@ export function BisectionControls({ a, setA, b, setB, tol, setTol, n, setN }) {
       <div className="input-row">
         <div className="input-group">
           <label htmlFor="input-tol" className="input-label">
-            Tolerancia (tol)
+            Tolerance (tol)
           </label>
           <input
             id="input-tol"
             type="number"
             step="any"
             className="styled-input"
-            value={tol}
-            onChange={(e) => setTol(parseFloat(e.target.value) || 1e-6)}
+            value={params.tol}
+            onChange={(e) =>
+              setParam("tol", parseFloat(e.target.value) || 1e-6)
+            }
           />
         </div>
 
         <div className="input-group">
           <label htmlFor="input-maxiter" className="input-label">
-            Máx Iteraciones (N)
+            Max Iterations (N)
           </label>
           <input
             id="input-maxiter"
@@ -58,8 +60,10 @@ export function BisectionControls({ a, setA, b, setB, tol, setTol, n, setN }) {
             min="1"
             max="500"
             className="styled-input"
-            value={n}
-            onChange={(e) => setN(parseInt(e.target.value, 10) || 50)}
+            value={params.maxIterations}
+            onChange={(e) =>
+              setParam("maxIterations", parseInt(e.target.value, 10) || 50)
+            }
           />
         </div>
       </div>

@@ -1,15 +1,17 @@
 import { useRef, useEffect, useState } from "react";
 import { useDesmosCalc } from "../../hooks/useDesmosCalc";
-import { useBisectionRun } from "../../hooks/useBisectionRun";
-import { useFixedPointRun } from "../../hooks/useFixedPointRun";
 import { GraphCanvas } from "../graphCanvas/GraphCanvas";
 import { MethodSelector } from "../controls/MethodSelector";
 import { BisectionControls } from "../bisectionControls/BisectionControls";
 import { FixedPointControls } from "../fixedPointControls/FixedPointControls";
 import { ResultsSummary } from "../results/ResultsSummary";
+
+import { useMethodRunner } from "../../hooks/useMethodRunner";
+import { METHODS } from "../../constants/methods";
+
 import {
-  cancelarAnimacionPendiente,
-  limpiarPuntosPrevios,
+  cancelPendingAnimation,
+  cleanPreviousPoints,
 } from "../../utils/Animations";
 
 export function GraphPanel() {
@@ -17,32 +19,33 @@ export function GraphPanel() {
   const { calculator, calculatorRef } = useDesmosCalc(containerRef);
   const timeoutsRef = useRef([]);
 
-  const [activeMethod, setActiveMethod] = useState("bisection");
+  const [activeMethodId, setActiveMethodId] = useState("bisection");
+  const currentMethod = METHODS[activeMethodId];
 
-  const bisectionRunner = useBisectionRun(calculatorRef, timeoutsRef);
-  const fixedPointRunner = useFixedPointRun(calculatorRef, timeoutsRef);
-
-  const currentRunner =
-    activeMethod === "bisection" ? bisectionRunner : fixedPointRunner;
+  const methodRunner = useMethodRunner(
+    calculatorRef,
+    timeoutsRef,
+    currentMethod,
+  );
 
   // Actualizar las curvas bases en Desmos al inicializar o cambiar de método
   useEffect(() => {
     if (!calculator) return;
 
     // Limpiar puntos y animaciones anteriores
-    cancelarAnimacionPendiente(timeoutsRef);
-    limpiarPuntosPrevios(calculator);
+    cancelPendingAnimation(timeoutsRef);
+    cleanPreviousPoints(calculator);
 
-    if (activeMethod === "bisection") {
+    if (activeMethodId === "bisection") {
       calculator.removeExpression({ id: "linea-identidad" });
       calculator.setExpression({
-        id: "funcion",
+        id: "function",
         latex: "f(x) = x^2 - 2",
         color: "#2563eb",
       });
-    } else if (activeMethod === "fixedPoint") {
+    } else if (activeMethodId === "fixedPoint") {
       calculator.setExpression({
-        id: "funcion",
+        id: "function",
         latex: "g(x) = \\frac{x + \\frac{2}{x}}{2}",
         color: "#2563eb",
       });
@@ -54,74 +57,62 @@ export function GraphPanel() {
         lineStyle: window.Desmos?.Styles?.DASHED || "DASHED",
       });
     }
-  }, [activeMethod, calculator]);
-
-  const handleSelectMethod = (methodId) => {
-    bisectionRunner.reset();
-    fixedPointRunner.reset();
-    setActiveMethod(methodId);
-  };
-
-  const handleRun = () => {
-    currentRunner.run();
-  };
-
-  const handleReset = () => {
-    currentRunner.reset();
-  };
+  }, [activeMethodId, calculator]);
 
   return (
     <div className="layout-container">
       <aside className="sidebar">
         <header className="sidebar-header">
           <div className="brand-badge">SIMAT</div>
-          <h1 className="sidebar-title">Búsqueda de Raíces</h1>
-          <p className="sidebar-subtitle">
-            Simulador visual interactivo de métodos numéricos
-          </p>
         </header>
 
         <div className="sidebar-content">
           <MethodSelector
-            activeMethod={activeMethod}
-            onSelectMethod={handleSelectMethod}
+            activeMethod={activeMethodId}
+            onSelectMethod={setActiveMethodId}
           />
 
           <div className="controls-card">
-            {activeMethod === "bisection" && (
-              <BisectionControls {...bisectionRunner} />
+            {activeMethodId === "bisection" && (
+              <BisectionControls
+                params={methodRunner.params}
+                setParam={methodRunner.setParam}
+              />
             )}
-            {activeMethod === "fixedPoint" && (
-              <FixedPointControls {...fixedPointRunner} />
+            {activeMethodId === "fixedPoint" && (
+              <FixedPointControls
+                params={methodRunner.params}
+                setParam={methodRunner.setParam}
+              />
             )}
 
             <div className="actions-group">
               <button
                 type="button"
                 className="btn-primary"
-                onClick={handleRun}
-                disabled={currentRunner.isRunning}
+                onClick={methodRunner.run}
+                disabled={methodRunner.isRunning}
               >
-                {currentRunner.isRunning
-                  ? "Simulando..."
-                  : "▶ Ejecutar Simulación"}
+                {methodRunner.isRunning
+                  ? "Simulating..."
+                  : "▶ Execute Simulation"}
               </button>
 
               <button
                 type="button"
                 className="btn-secondary"
-                onClick={handleReset}
+                onClick={methodRunner.reset}
               >
-                ↺ Reiniciar
+                ↺ Restart
               </button>
             </div>
           </div>
 
           <ResultsSummary
-            results={currentRunner.results}
-            isRunning={currentRunner.isRunning}
-            error={currentRunner.error}
-            currentLatex={currentRunner.currentLatex}
+            results={methodRunner.results}
+            isRunning={methodRunner.isRunning}
+            error={methodRunner.error}
+            currentLatex={methodRunner.currentLatex}
           />
         </div>
       </aside>

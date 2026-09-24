@@ -1,6 +1,6 @@
 export function createFunctionFromLatex(latex) {
   if (!latex || typeof latex !== "string") {
-    throw new Error("No hay una función ingresada en Desmos.");
+    throw new Error("No valid LaTeX string provided.");
   }
 
   let s = latex.trim();
@@ -64,31 +64,36 @@ export function createFunctionFromLatex(latex) {
     return (x) => {
       const val = fn(x, Math);
       if (typeof val !== "number" || isNaN(val)) {
-        throw new Error(`Evaluación indefinida en x = ${x}`);
+        throw new Error(`Undefined evaluation at x = ${x}`);
       }
       return val;
     };
   } catch (err) {
-    throw new Error(
-      `No se pudo interpretar la ecuación de Desmos: "${latex}". Revisa la sintaxis.`,
-      { cause: err }
-    );
+    throw new Error(`Error parsing LaTeX: "${latex}".`, { cause: err });
   }
-
 }
 
-export function getFunctionFromCalculator(calculator, preferredId = "funcion") {
+export function getFunctionFromCalculator(
+  calculator,
+  preferredId = "function",
+) {
   if (!calculator) {
-    throw new Error("Calculadora de Desmos no inicializada");
+    throw new Error("Calculator reference is not provided.");
   }
 
   const expressions = calculator.getExpressions() || [];
   const found =
     expressions.find((e) => e.id === preferredId && e.latex) ||
-    expressions.find((e) => e.latex && e.id !== "linea-identidad" && !e.id.startsWith("punto-") && !e.id.startsWith("linea-"));
+    expressions.find(
+      (e) =>
+        e.latex &&
+        e.id !== "linea-identidad" &&
+        !e.id.startsWith("punto-") &&
+        !e.id.startsWith("linea-"),
+    );
 
   if (!found || !found.latex) {
-    throw new Error("Escribe una función en la lista de expresiones de Desmos (ej. f(x) = x^2 - 2)");
+    throw new Error("Please ensure a function is defined.");
   }
 
   return {

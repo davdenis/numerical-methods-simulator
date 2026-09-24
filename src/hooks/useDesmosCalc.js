@@ -7,7 +7,7 @@ export function useDesmosCalc(containerRef) {
   useEffect(() => {
     if (!containerRef.current) return;
     if (typeof window === "undefined" || !window.Desmos) {
-      console.warn("Desmos API aún no está disponible");
+      console.warn("Desmos API is not available.");
       return;
     }
 

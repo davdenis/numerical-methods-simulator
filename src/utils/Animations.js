@@ -1,19 +1,19 @@
-export function limpiarPuntosPrevios(calculator, cantidad = 200) {
+export function cleanPreviousPoints(calculator, q = 200) {
   if (!calculator) return;
-  for (let i = 0; i < cantidad; i++) {
+  for (let i = 0; i < q; i++) {
     calculator.removeExpression({ id: `punto-${i}` });
     calculator.removeExpression({ id: `linea-${i}` });
     calculator.removeExpression({ id: `punto_${i}` });
   }
 }
 
-export function cancelarAnimacionPendiente(timeoutsRef) {
+export function cancelPendingAnimation(timeoutsRef) {
   if (!timeoutsRef?.current) return;
   timeoutsRef.current.forEach((id) => clearTimeout(id));
   timeoutsRef.current = [];
 }
 
-export function animarIteraciones(
+export function animateIterations(
   calculator,
   iteraciones,
   timeoutsRef,
@@ -71,18 +71,18 @@ export function animarIteraciones(
   });
 }
 
-export function ejecutarMetodo(
+export function executeMethod(
   calculator,
   timeoutsRef,
   { fn, getCoords, delayMs = 900, onStep = null, onFinish = null },
 ) {
-  cancelarAnimacionPendiente(timeoutsRef);
-  limpiarPuntosPrevios(calculator);
+  cancelPendingAnimation(timeoutsRef);
+  cleanPreviousPoints(calculator);
 
-  const iteraciones = fn();
-  animarIteraciones(
+  const iterations = fn();
+  animateIterations(
     calculator,
-    iteraciones,
+    iterations,
     timeoutsRef,
     getCoords,
     delayMs,
@@ -90,5 +90,5 @@ export function ejecutarMetodo(
     onFinish,
   );
 
-  return iteraciones;
+  return iterations;
 }
