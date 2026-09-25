@@ -1,9 +1,7 @@
 export function cleanPreviousPoints(calculator, q = 200) {
   if (!calculator) return;
   for (let i = 0; i < q; i++) {
-    calculator.removeExpression({ id: `punto-${i}` });
-    calculator.removeExpression({ id: `linea-${i}` });
-    calculator.removeExpression({ id: `punto_${i}` });
+    calculator.removeExpression({ id: `point-${i}` });
   }
 }
 
@@ -15,28 +13,28 @@ export function cancelPendingAnimation(timeoutsRef) {
 
 export function animateIterations(
   calculator,
-  iteraciones,
+  iterations,
   timeoutsRef,
   getCoords,
   delayMs = 900,
   onStep = null,
   onFinish = null,
 ) {
-  if (!calculator || !iteraciones?.length) return;
+  if (!calculator || !iterations?.length) return;
 
-  iteraciones.forEach((iter, index) => {
+  iterations.forEach((iter, index) => {
     const timeoutId = setTimeout(() => {
       const { x, y } = getCoords(iter);
-      const isLast = index === iteraciones.length - 1;
+      const isLast = index === iterations.length - 1;
 
       if (index > 0) {
-        const { x: prevX, y: prevY } = getCoords(iteraciones[index - 1]);
+        const { x: prevX, y: prevY } = getCoords(iterations[index - 1]);
         calculator.setExpression({
           id: `point-${index - 1}`,
           latex: `(${prevX}, ${prevY})`,
           color: "#1750a0",
           showLabel: false,
-          pointSize: 9,
+          pointSize: 5,
         });
       }
 
@@ -48,21 +46,11 @@ export function animateIterations(
         showLabel: true,
       });
 
-      if (!isLast) {
-        calculator.setExpression({
-          id: `point-${index}`,
-          latex: `(${x}, ${y})`,
-          color: "#1750a0",
-          showLabel: false,
-          pointSize: 9,
-        });
-      }
-
       if (onStep) {
         onStep(iter, index);
       }
 
-      if (index === iteraciones.length - 1 && onFinish) {
+      if (index === iterations.length - 1 && onFinish) {
         onFinish();
       }
     }, index * delayMs);

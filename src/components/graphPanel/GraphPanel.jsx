@@ -37,24 +37,24 @@ export function GraphPanel() {
     cleanPreviousPoints(calculator);
 
     if (activeMethodId === "bisection") {
-      calculator.removeExpression({ id: "linea-identidad" });
+      calculator.removeExpression({ id: "identity-line" });
       calculator.setExpression({
         id: "function",
         latex: "f(x) = x^2 - 2",
         color: "#2563eb",
       });
     } else if (activeMethodId === "fixedPoint") {
+      // Línea y = x para visualizar la intersección de punto fijo
+      calculator.setExpression({
+        id: "identity-line",
+        latex: "y = x",
+        color: "#94a3b8",
+        lineStyle: window.Desmos?.Styles?.DASHED || "DASHED",
+      });
       calculator.setExpression({
         id: "function",
         latex: "g(x) = \\frac{x + \\frac{2}{x}}{2}",
         color: "#2563eb",
-      });
-      // Línea y = x para visualizar la intersección de punto fijo
-      calculator.setExpression({
-        id: "linea-identidad",
-        latex: "y = x",
-        color: "#94a3b8",
-        lineStyle: window.Desmos?.Styles?.DASHED || "DASHED",
       });
     }
   }, [activeMethodId, calculator]);
